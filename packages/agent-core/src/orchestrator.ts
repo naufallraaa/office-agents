@@ -78,6 +78,7 @@ export class SquadOrchestrator {
           }
         ],
         temperature: 0.3,
+        stream: false,
       });
       pmBriefing = pmResponse.choices[0]?.message?.content || pmBriefing;
     } catch (e) {}
@@ -189,6 +190,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
           { role: 'user', content: leadPrompt },
         ],
         temperature: 0.2,
+        stream: false,
       });
 
       const raw = leadResponse.choices[0]?.message?.content || '';
@@ -293,6 +295,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
             },
           ],
           temperature: 0.3,
+          stream: false,
         });
 
         subtask.output = workerResponse.choices[0]?.message?.content || 'Implementasi selesai.';
@@ -439,6 +442,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
           },
         ],
         temperature: 0.2,
+        stream: false,
       });
       qaReport = qaResponse.choices[0]?.message?.content || qaReport;
     } catch (e: any) {

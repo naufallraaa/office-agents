@@ -112,7 +112,7 @@ export const AgentDossierModal: React.FC<AgentDossierModalProps> = ({
                 </button>
               </div>
               {reply && (
-                <div style={{ fontSize: 11, color: '#e2e8f0', background: '#1e293b', border: '1px solid #334155', borderRadius: 6, padding: '8px 10px', whiteSpace: 'pre-wrap' }}>
+                <div className="dossier-chat-reply" style={{ fontSize: 11, color: '#e2e8f0', background: '#1e293b', border: '1px solid #334155', borderRadius: 6, padding: '8px 10px', whiteSpace: 'pre-wrap' }}>
                   <span style={{ color: agent.color, fontWeight: 'bold' }}>{agent.name}: </span>
                   {reply}
                 </div>

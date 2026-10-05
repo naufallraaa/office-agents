@@ -34,19 +34,19 @@ export const ReadyToPushModal: React.FC<ReadyToPushModalProps> = ({ isOpen, onCl
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
           <div style={styles.headerTitle}>
-            <span>🚀 SPRINT COMPLETED — READY TO PUSH</span>
+            <span>🚀 SPRINT SELESAI — SIAP PUSH</span>
           </div>
           <button style={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
 
         <div style={styles.body}>
           <div style={styles.section}>
-            <div style={styles.label}>TARGET PROJECT DIRECTORY:</div>
+            <div style={styles.label}>DIREKTORI TARGET PROYEK:</div>
             <div style={styles.pathBadge}>{targetPath}</div>
           </div>
 
           <div style={styles.section}>
-            <div style={styles.label}>COMPLETED SUBTASKS ({doneTasks.length}):</div>
+            <div style={styles.label}>SUBTASK YANG SELESAI ({doneTasks.length}):</div>
             <div style={styles.taskList}>
               {doneTasks.length === 0 ? (
                 <div style={{ color: '#64748b', fontSize: 13, fontStyle: 'italic' }}>
@@ -69,7 +69,7 @@ export const ReadyToPushModal: React.FC<ReadyToPushModalProps> = ({ isOpen, onCl
             <div style={styles.codeWrap}>
               <pre style={styles.codeBlock}>{gitCommands}</pre>
               <button style={styles.copyBtn} onClick={handleCopy}>
-                {copied ? '✅ COPIED TO CLIPBOARD!' : '📋 COPY GIT COMMAND'}
+                {copied ? '✅ TERSALIN KE CLIPBOARD!' : '📋 SALIN PERINTAH GIT'}
               </button>
             </div>
             <div style={styles.hint}>

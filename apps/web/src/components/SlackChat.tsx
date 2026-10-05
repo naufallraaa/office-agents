@@ -126,7 +126,7 @@ const SlackChat: React.FC<SlackChatProps> = ({ messages, muted, volume, onToggle
     }
   }, [messages, typingUser])
 
-  const displayed = messages.slice(-12)
+  const displayed = messages.slice(-60)
   const onlineCount = new Set(messages.slice(-20).filter(m => !m.isSystem).map(m => m.sender)).size
 
   return (

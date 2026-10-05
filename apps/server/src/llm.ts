@@ -15,6 +15,7 @@ export async function healthCheck(): Promise<boolean> {
       model,
       messages: [{ role: 'user', content: 'Hi, respond with OK' }],
       max_tokens: 10,
+      stream: false,
     });
     const content = response.choices[0]?.message?.content || '';
     console.log('✓ LLM health check:', content.trim());

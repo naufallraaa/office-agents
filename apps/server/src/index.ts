@@ -325,6 +325,7 @@ app.post('/api/chat', async (c) => {
             ],
             max_tokens: 150,
             temperature: 0.6,
+            stream: false,
           });
           const reply = res.choices[0]?.message?.content || 'Siap boss!';
 
@@ -352,6 +353,15 @@ app.post('/api/chat', async (c) => {
           }
         } catch (e: any) {
           console.error('LLM chat error:', e);
+          broadcast({
+            type: 'activity:log',
+            timestamp: Date.now(),
+            data: {
+              sender: t.display,
+              color: '#ef4444',
+              message: `(Maaf Boss, koneksi AI lagi error: ${e.message || 'unknown error'})`,
+            },
+          });
         }
       }
     })();
@@ -425,6 +435,7 @@ app.post('/api/agents/:id/chat', async (c) => {
       ],
       max_tokens: 200,
       temperature: 0.5,
+      stream: false,
     });
 
     const reply = response.choices[0]?.message?.content || 'Siap laksanakan!';
@@ -456,6 +467,16 @@ app.post('/api/agents/:id/chat', async (c) => {
 
     return c.json({ ok: true, reply });
   } catch (err: any) {
+    console.error('Direct chat error:', err);
+    broadcast({
+      type: 'activity:log',
+      timestamp: Date.now(),
+      data: {
+        sender: 'SYSTEM',
+        color: '#ef4444',
+        message: `(Gagal menghubungi agen: ${err.message || 'unknown error'})`,
+      },
+    });
     return c.json({ ok: false, error: err.message }, 500);
   }
 });

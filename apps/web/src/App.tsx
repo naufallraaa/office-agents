@@ -1347,9 +1347,9 @@ const App: React.FC = () => {
     // 8s: 3 agents spawn with ultra-think tasks (energy drinks!)
     timers.push(setTimeout(() => {
       const spawns = [
-        { id: 'vid-security', role: 'security-auditor', name: 'Security', task: 'ultra-think: deep analysis of auth middleware vulnerabilities' },
-        { id: 'vid-reviewer', role: 'code-reviewer', name: 'Reviewer', task: 'ultra-think: reviewing authentication token handling' },
-        { id: 'vid-frontend', role: 'frontend-developer', name: 'Frontend', task: 'ultra-think: auditing client-side auth state management' },
+        { id: 'vid-security', role: 'security-auditor', name: 'Security', task: 'ultra-think: analisis mendalam celah auth middleware' },
+        { id: 'vid-reviewer', role: 'code-reviewer', name: 'Reviewer', task: 'ultra-think: review penanganan token autentikasi' },
+        { id: 'vid-frontend', role: 'frontend-developer', name: 'Frontend', task: 'ultra-think: audit state management auth sisi klien' },
       ]
       spawns.forEach((s, i) => {
         timers.push(setTimeout(() => {
@@ -1362,14 +1362,14 @@ const App: React.FC = () => {
     // Why: swap to Office-themed chatter when /the-office mode is on at sim start
     const isOfficeSim = getTheme() === 'office'
     const defaultToolMessages = [
-      { t: 16000, sender: 'Security', role: 'security-auditor', text: '⚡ reading src/auth/middleware.ts' },
+      { t: 16000, sender: 'Security', role: 'security-auditor', text: '⚡ membaca src/auth/middleware.ts' },
       { t: 18000, sender: 'Reviewer', role: 'code-reviewer', text: '⚡ running: grep -r "jwt" src/' },
-      { t: 20000, sender: 'Security', role: 'security-auditor', text: '⚠️ session tokens stored in localStorage — XSS risk' },
-      { t: 22000, sender: 'Frontend', role: 'frontend-developer', text: '⚡ reading src/hooks/useAuth.ts' },
-      { t: 24000, sender: 'Reviewer', role: 'code-reviewer', text: '🔍 checking CORS config on /api/auth endpoints' },
-      { t: 26000, sender: 'Security', role: 'security-auditor', text: '🚨 JWT refresh token has no expiry set' },
+      { t: 20000, sender: 'Security', role: 'security-auditor', text: '⚠️ session token tersimpan di localStorage — risiko XSS' },
+      { t: 22000, sender: 'Frontend', role: 'frontend-developer', text: '⚡ membaca src/hooks/useAuth.ts' },
+      { t: 24000, sender: 'Reviewer', role: 'code-reviewer', text: '🔍 cek konfigurasi CORS di endpoint /api/auth' },
+      { t: 26000, sender: 'Security', role: 'security-auditor', text: '🚨 refresh token JWT belum diset waktu kedaluwarsa' },
       { t: 28000, sender: 'Frontend', role: 'frontend-developer', text: '⚡ editing src/auth/tokenStore.ts' },
-      { t: 30000, sender: 'Reviewer', role: 'code-reviewer', text: '💡 suggesting httpOnly cookies instead of localStorage' },
+      { t: 30000, sender: 'Reviewer', role: 'code-reviewer', text: '💡 saran pakai cookie httpOnly daripada localStorage' },
     ]
     const toolMessages = isOfficeSim
       ? defaultToolMessages.map((m, i) => {
@@ -1386,7 +1386,7 @@ const App: React.FC = () => {
 
     // 25s: Antony types a follow-up
     timers.push(setTimeout(() => {
-      setAutoTypeText(isOfficeSim ? (OFFICE_SIM_BOSS_PROMPTS[1] ?? 'how bad is the localStorage issue?') : 'how bad is the localStorage issue?')
+      setAutoTypeText(isOfficeSim ? (OFFICE_SIM_BOSS_PROMPTS[1] ?? 'seberapa parah masalah localStorage-nya?') : 'seberapa parah masalah localStorage-nya?')
     }, 25000))
 
     // 27s: Agent replies
@@ -1394,8 +1394,8 @@ const App: React.FC = () => {
       const cfg = AGENT_CONFIGS['security-auditor'] ?? AGENT_CONFIGS['default']
       addMsg('Security', 'security-auditor', cfg.color,
         isOfficeSim
-          ? 'critical — Dwight-level bad. any XSS gives full account takeover. moving to httpOnly cookies now'
-          : 'critical — any XSS gives full account takeover. moving to httpOnly cookies now')
+          ? 'kritis — separah Dwight. XSS apa pun bisa takeover akun penuh. sekarang pindah ke cookie httpOnly'
+          : 'kritis — XSS apa pun bisa takeover akun penuh. sekarang pindah ke cookie httpOnly')
     }, 27500))
 
     // 30s: Random chatter

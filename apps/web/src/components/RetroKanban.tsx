@@ -65,7 +65,7 @@ export const RetroKanban: React.FC<RetroKanbanProps> = ({ isOpen, onClose }) => 
             <span style={styles.taskCount}>[{tasks.length} SUBTASKS]</span>
           </div>
           <button style={styles.closeBtn} onClick={onClose} title="Tutup papan (ESC)">
-            ✕ CLOSE
+            ✕ TUTUP
           </button>
         </div>
 
@@ -85,7 +85,7 @@ export const RetroKanban: React.FC<RetroKanbanProps> = ({ isOpen, onClose }) => 
 
                 <div style={styles.taskList}>
                   {columnTasks.length === 0 ? (
-                    <div style={styles.emptyColumn}>No tasks</div>
+                    <div style={styles.emptyColumn}>Tidak ada task</div>
                   ) : (
                     columnTasks.map((task) => {
                       const badge = getRoleBadge(task.role);
@@ -139,7 +139,7 @@ export const RetroKanban: React.FC<RetroKanbanProps> = ({ isOpen, onClose }) => 
                       {viewingTask.title}
                     </div>
                     <div style={{ fontSize: 11, color: '#94a3b8' }}>
-                      Author: {viewingTask.assignedName} ({viewingTask.role?.toUpperCase()})
+                      Penulis: {viewingTask.assignedName} ({viewingTask.role?.toUpperCase()})
                     </div>
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export const RetroKanban: React.FC<RetroKanbanProps> = ({ isOpen, onClose }) => 
                     style={styles.copyBtn}
                     onClick={() => handleCopy(viewingTask.result || '')}
                   >
-                    {copied ? '✅ TERSALIN!' : '📋 COPY KODE'}
+                    {copied ? '✅ TERSALIN!' : '📋 SALIN KODE'}
                   </button>
                   <button 
                     style={styles.closeBtn}
