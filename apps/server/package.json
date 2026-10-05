@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun"
+  },
+  "dependencies": {
+    "hono": "^4.6.15",
+    "openai": "^4.77.3",
+    "better-sqlite3": "^11.8.1",
+    "agent-core": "workspace:*",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12"
+  }
+}

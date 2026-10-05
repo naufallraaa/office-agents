@@ -1,0 +1,11 @@
+{
+  "name": "agent-core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "openai": "^4.77.3",
+    "shared": "workspace:*"
+  }
+}
