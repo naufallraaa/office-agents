@@ -17,6 +17,7 @@ export interface Agent {
   role: AgentRole;
   roleTitle: string;
   state: AgentState;
+  floor: 1 | 2 | 3; // 1: Cafe/Lounge, 2: Workspace, 3: Rooftop Boardroom
   position: { x: number; y: number };
   workstation: { x: number; y: number };
   emoji: string;
@@ -68,6 +69,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     role: 'pm',
     roleTitle: 'Project Manager',
     state: 'idle',
+    floor: 2,
     position: { x: 2, y: 3 },
     workstation: { x: 2, y: 3 },
     emoji: '📊',
@@ -80,6 +82,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     role: 'it_lead',
     roleTitle: 'IT Lead',
     state: 'idle',
+    floor: 2,
     position: { x: 3, y: 3 },
     workstation: { x: 3, y: 3 },
     emoji: '👔',
@@ -92,6 +95,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     role: 'frontend',
     roleTitle: 'Frontend Eng',
     state: 'idle',
+    floor: 2,
     position: { x: 3, y: 7 },
     workstation: { x: 3, y: 7 },
     emoji: '🎨',
@@ -104,6 +108,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     role: 'backend',
     roleTitle: 'Backend Eng',
     state: 'idle',
+    floor: 2,
     position: { x: 7, y: 3 },
     workstation: { x: 7, y: 3 },
     emoji: '⚙️',
@@ -116,6 +121,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     role: 'devops',
     roleTitle: 'DevOps Eng',
     state: 'idle',
+    floor: 2,
     position: { x: 7, y: 7 },
     workstation: { x: 7, y: 7 },
     emoji: '🚀',
@@ -128,6 +134,7 @@ export const DEFAULT_AGENTS: Agent[] = [
     role: 'qa',
     roleTitle: 'QA Engineer',
     state: 'idle',
+    floor: 2,
     position: { x: 5, y: 5 },
     workstation: { x: 5, y: 5 },
     emoji: '🔍',

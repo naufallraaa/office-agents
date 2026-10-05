@@ -28,6 +28,7 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
   const [isLogMinimized, setIsLogMinimized] = useState(false);
   const [isKanbanOpen, setIsKanbanOpen] = useState(false);
   const [isNightMode, setIsNightMode] = useState(false);
+  const [isSendingToAgent, setIsSendingToAgent] = useState(false);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -70,8 +71,6 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
     }
   };
 
-  const [isSendingToAgent, setIsSendingToAgent] = useState(false);
-
   const handleSendToAgent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatMessage.trim() || !selectedAgent || isSendingToAgent) return;
@@ -98,95 +97,134 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
 
   return (
     <div style={styles.hudContainer}>
-      {/* ==================== TOP BAR ==================== */}
-      <div style={styles.topBar}>
-        <div style={styles.branding}>
-          <span style={styles.logoIcon}>🏢</span>
-          <span style={styles.logoText}>KANTOR-AI</span>
-          <span style={styles.subText}>[16-BIT AUTONOMOUS SQUAD]</span>
+      {/* ==================== TOP NAVIGATION SECTION ==================== */}
+      <div style={styles.topSection}>
+        {/* Main Floating Glass Navbar */}
+        <div style={styles.topBar}>
+          <div style={styles.branding}>
+            <span style={styles.logoIcon}>🏢</span>
+            <span style={styles.logoText}>KANTOR-AI</span>
+            <span style={styles.subText}>AUTONOMOUS SQUAD</span>
+          </div>
+
+          <div style={styles.controlsGroup}>
+            <button style={styles.navBtn} onClick={triggerWorkMode}>
+              💻 WORK
+            </button>
+            <button style={styles.navBtn} onClick={triggerMeetingMode}>
+              📋 SPRINT SYNC
+            </button>
+            <button style={styles.navBtn} onClick={triggerBreakMode}>
+              ☕ PANTRY
+            </button>
+
+            {/* Kanban Board Toggle Button */}
+            <button 
+              style={{
+                ...styles.navBtn,
+                borderColor: isKanbanOpen ? '#38bdf8' : 'rgba(255, 255, 255, 0.15)',
+                color: isKanbanOpen ? '#38bdf8' : '#f8fafc',
+                backgroundColor: isKanbanOpen ? 'rgba(56, 189, 248, 0.15)' : 'rgba(15, 23, 42, 0.8)',
+              }} 
+              onClick={() => setIsKanbanOpen(!isKanbanOpen)}
+            >
+              📋 KANBAN {tasks.length > 0 ? `(${tasks.length})` : ''}
+            </button>
+
+            {/* Day / Night Ambient Toggle */}
+            <button 
+              style={{
+                ...styles.navBtn,
+                borderColor: isNightMode ? '#818cf8' : 'rgba(255, 255, 255, 0.15)',
+                color: isNightMode ? '#c7d2fe' : '#f8fafc',
+              }} 
+              onClick={() => {
+                const next = !isNightMode;
+                setIsNightMode(next);
+                onToggleNightMode?.(next);
+              }}
+              title="Toggle Day / Night Lighting"
+            >
+              {isNightMode ? '🌙 NIGHT' : '☀️ DAY'}
+            </button>
+
+            {/* Fullscreen Button */}
+            <button style={styles.fullscreenBtn} onClick={toggleFullscreen} title="Toggle Fullscreen">
+              {isFullscreen ? '🗗 EXIT' : '⛶ FULLSCREEN'}
+            </button>
+
+            {/* Online Indicator */}
+            <div style={styles.statusIndicator}>
+              <span style={{
+                display: 'inline-block',
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: isConnected ? '#22c55e' : '#ef4444',
+                marginRight: 6,
+                boxShadow: isConnected ? '0 0 10px #22c55e' : '0 0 10px #ef4444'
+              }} />
+              <span style={{ color: isConnected ? '#22c55e' : '#ef4444', fontSize: 16 }}>
+                {isConnected ? 'LIVE' : 'CONNECTING...'}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div style={styles.controlsGroup}>
-          <button style={styles.retroBtn} onClick={triggerWorkMode}>
-            💻 WORK
-          </button>
-          <button style={styles.retroBtn} onClick={triggerMeetingMode}>
-            📋 SPRINT SYNC
-          </button>
-          <button style={styles.retroBtn} onClick={triggerBreakMode}>
-            ☕ PANTRY
-          </button>
-
-          {/* Kanban Board Toggle Button */}
-          <button 
-            style={{
-              ...styles.retroBtn,
-              borderColor: isKanbanOpen ? '#38bdf8' : '#475569',
-              color: isKanbanOpen ? '#38bdf8' : '#f8fafc',
-            }} 
-            onClick={() => setIsKanbanOpen(!isKanbanOpen)}
-          >
-            📋 KANBAN {tasks.length > 0 ? `(${tasks.length})` : ''}
-          </button>
-
-          {/* Day / Night Ambient Toggle */}
-          <button 
-            style={{
-              ...styles.retroBtn,
-              borderColor: isNightMode ? '#818cf8' : '#475569',
-              color: isNightMode ? '#a5b4fc' : '#f8fafc',
-            }} 
-            onClick={() => {
-              const next = !isNightMode;
-              setIsNightMode(next);
-              onToggleNightMode?.(next);
-            }}
-            title="Toggle Day / Night Lighting"
-          >
-            {isNightMode ? '🌙 NIGHT' : '☀️ DAY'}
-          </button>
-
-          {/* Fullscreen Button */}
-          <button style={styles.fullscreenBtn} onClick={toggleFullscreen} title="Toggle Fullscreen">
-            {isFullscreen ? '🗗 EXIT FULLSCREEN' : '⛶ FULLSCREEN'}
-          </button>
-
-          <div style={styles.statusIndicator}>
-            <span style={{
-              display: 'inline-block',
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              backgroundColor: isConnected ? '#22c55e' : '#ef4444',
-              marginRight: 6,
-              boxShadow: isConnected ? '0 0 8px #22c55e' : '0 0 8px #ef4444'
-            }} />
-            <span style={{ color: isConnected ? '#22c55e' : '#ef4444', fontSize: 12, fontWeight: 600 }}>
-              {isConnected ? 'ONLINE' : 'CONNECTING...'}
-            </span>
+        {/* Quick-Jump Squad Navigation Ribbon */}
+        <div style={styles.squadRibbon}>
+          <span style={styles.ribbonTitle}>SQUAD FOCUS:</span>
+          <div style={styles.pillsList}>
+            {agents.map((agent) => {
+              const isSelected = selectedAgent?.id === agent.id;
+              return (
+                <button
+                  key={agent.id}
+                  onClick={() => {
+                    onFocusAgent(agent);
+                    setSelectedAgent(agent);
+                  }}
+                  style={{
+                    ...styles.agentPill,
+                    borderColor: isSelected ? agent.color : 'rgba(255, 255, 255, 0.12)',
+                    backgroundColor: isSelected ? `${agent.color}30` : 'rgba(15, 23, 42, 0.75)',
+                    color: isSelected ? '#ffffff' : '#e2e8f0',
+                    boxShadow: isSelected ? `0 0 14px ${agent.color}50` : 'none',
+                  }}
+                  title={`Fokus kamera ke meja ${agent.name}`}
+                >
+                  <span style={{ fontSize: 18 }}>{agent.emoji}</span>
+                  <span style={{ fontWeight: 'bold' }}>{agent.name}</span>
+                  <span style={{ color: agent.color, fontSize: 16 }}>[{agent.roleTitle}]</span>
+                  <span style={{ opacity: 0.9 }}>
+                    {agent.state === 'working' ? '💻' : agent.state === 'meeting' ? '📋' : agent.state === 'break' ? '☕' : '💤'}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* ==================== BOTTOM LEFT: ACTIVITY & CHAT LOG ==================== */}
+      {/* ==================== BOTTOM RIGHT: LIVE ACTIVITY STREAM ==================== */}
       <div style={{
         ...styles.logPanel,
-        maxHeight: isLogMinimized ? 'auto' : 230,
+        maxHeight: isLogMinimized ? 'auto' : 240,
         width: isLogMinimized ? 260 : 440,
       }}>
         <div 
           style={{
             ...styles.panelHeader,
             cursor: 'pointer',
-            borderRadius: isLogMinimized ? 6 : '6px 6px 0 0',
+            borderRadius: isLogMinimized ? 8 : '8px 8px 0 0',
           }}
           onClick={() => setIsLogMinimized(!isLogMinimized)}
           title="Klik untuk minimize/expand"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span>[SYS_COMM_LOG]</span>
-            <span style={{ fontSize: 11, color: '#94a3b8', letterSpacing: 0.5 }}>
-              {isLogMinimized ? '(MINIMIZED)' : 'LIVE STREAM'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: '#38bdf8', fontSize: 18 }}>[LIVE_FEED]</span>
+            <span style={{ fontSize: 15, color: '#94a3b8' }}>
+              {isLogMinimized ? '(MINIMIZED)' : 'STREAM AKTIF'}
             </span>
           </div>
           <button 
@@ -212,11 +250,11 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
         )}
       </div>
 
-      {/* ==================== RIGHT SIDE: AGENT INSPECTOR ==================== */}
+      {/* ==================== RIGHT SIDE: AGENT INSPECTOR DOSSIER ==================== */}
       {selectedAgent && (
         <div style={styles.agentDossier}>
           <div style={styles.panelHeader}>
-            <span>[AGENT_DOSSIER]</span>
+            <span style={{ color: '#38bdf8', fontSize: 19 }}>DOSSIER: {selectedAgent.name.toUpperCase()}</span>
             <button 
               onClick={() => setSelectedAgent(null)}
               style={styles.closeBtn}
@@ -227,26 +265,26 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
 
           <div style={styles.dossierContent}>
             <div style={styles.dossierHeader}>
-              <span style={{ fontSize: 32 }}>{selectedAgent.emoji}</span>
+              <span style={{ fontSize: 36 }}>{selectedAgent.emoji}</span>
               <div style={{ marginLeft: 12 }}>
-                <div style={{ fontSize: 16, color: selectedAgent.color, fontWeight: 700 }}>
+                <div style={{ fontSize: 22, color: selectedAgent.color, fontWeight: 'bold' }}>
                   {selectedAgent.name}
                 </div>
-                <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>
-                  ROLE: {selectedAgent.roleTitle.toUpperCase()}
+                <div style={{ fontSize: 16, color: '#94a3b8' }}>
+                  {selectedAgent.roleTitle.toUpperCase()}
                 </div>
               </div>
             </div>
 
             <div style={styles.dossierField}>
-              <span style={styles.fieldLabel}>STATUS:</span>
-              <span style={{ color: '#38bdf8', fontWeight: 600, textTransform: 'uppercase', fontSize: 13 }}>
+              <span style={styles.fieldLabel}>STATUS SAAT INI:</span>
+              <span style={{ color: '#38bdf8', textTransform: 'uppercase', fontSize: 18, fontWeight: 'bold' }}>
                 {selectedAgent.state}
               </span>
             </div>
 
             <div style={styles.dossierField}>
-              <span style={styles.fieldLabel}>PERSONALITY:</span>
+              <span style={styles.fieldLabel}>STYLE & PERSONALITY:</span>
               <div style={styles.personalityText}>
                 {selectedAgent.personality}
               </div>
@@ -254,8 +292,8 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
 
             {selectedAgent.currentTask && (
               <div style={styles.dossierField}>
-                <span style={styles.fieldLabel}>ACTIVE TASK:</span>
-                <div style={{ color: '#facc15', fontSize: 12, fontWeight: 500 }}>
+                <span style={styles.fieldLabel}>SUBTASK AKTIF:</span>
+                <div style={{ color: '#facc15', fontSize: 16 }}>
                   {selectedAgent.currentTask}
                 </div>
               </div>
@@ -265,27 +303,27 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
               style={styles.actionBtn}
               onClick={() => onFocusAgent(selectedAgent)}
             >
-              🎯 FOCUS CAMERA
+              🎯 FOKUS KE MEJA {selectedAgent.name.toUpperCase()}
             </button>
 
             {/* Direct message to agent */}
-            <form onSubmit={handleSendToAgent} style={{ marginTop: 12 }}>
+            <form onSubmit={handleSendToAgent} style={{ marginTop: 14 }}>
               <input
                 type="text"
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}
-                placeholder={`Beri instruksi ke ${selectedAgent.name}...`}
+                placeholder={`Tanya sesuatu ke ${selectedAgent.name}...`}
                 style={styles.retroInput}
               />
               <button type="submit" style={styles.sendBtn} disabled={isSendingToAgent}>
-                {isSendingToAgent ? 'MENUNGGU BALASAN...' : 'KIRIM INSTRUKSI'}
+                {isSendingToAgent ? 'MENUNGGU JAWABAN...' : 'KIRIM PESAN'}
               </button>
             </form>
           </div>
         </div>
       )}
 
-      {/* ==================== BOTTOM CENTER: SPRINT COMMAND INPUT ==================== */}
+      {/* ==================== BOTTOM CENTER: SPOTLIGHT COMMAND INPUT ==================== */}
       <div style={styles.commandBar}>
         <form onSubmit={handleTaskSubmit} style={styles.commandForm}>
           <span style={styles.commandPrompt}>{'>'}</span>
@@ -293,11 +331,11 @@ export const RetroHUD: React.FC<RetroHUDProps> = ({ onFocusAgent, onToggleNightM
             type="text"
             value={inputTask}
             onChange={(e) => setInputTask(e.target.value)}
-            placeholder="Ketik tugas sprint baru untuk IT Lead (misal: 'Bikin auth JWT & dashboard kanban')..."
+            placeholder="Tulis sprint goal baru untuk tim (misal: 'Bikin auth JWT & dashboard kanban')..."
             style={styles.commandInput}
           />
           <button type="submit" style={styles.executeBtn}>
-            EXECUTE 🚀
+            EXECUTE SPRINT 🚀
           </button>
         </form>
       </div>
@@ -321,63 +359,68 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     padding: 16,
     boxSizing: 'border-box',
-    fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+    fontFamily: '"VT323", monospace',
+  },
+  topSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
+    width: '100%',
   },
   topBar: {
     pointerEvents: 'auto',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#090d16f2',
-    border: '1px solid #334155',
-    borderRadius: 6,
+    backgroundColor: 'rgba(9, 13, 22, 0.85)',
+    backdropFilter: 'blur(16px)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
     padding: '8px 16px',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.6)',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)',
   },
   branding: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
   },
   logoIcon: {
-    fontSize: 22,
+    fontSize: 24,
   },
   logoText: {
-    fontFamily: '"Press Start 2P", monospace',
-    fontSize: 13,
+    fontSize: 22,
     color: '#38bdf8',
     letterSpacing: 1,
+    fontWeight: 'bold',
   },
   subText: {
-    fontSize: 12,
+    fontSize: 16,
     color: '#64748b',
-    fontWeight: 500,
+    marginLeft: 6,
   },
   controlsGroup: {
     display: 'flex',
     alignItems: 'center',
     gap: 8,
   },
-  retroBtn: {
-    fontFamily: '"JetBrains Mono", monospace',
-    fontSize: 12,
-    fontWeight: 600,
-    padding: '6px 12px',
-    backgroundColor: '#1e293b',
-    border: '1px solid #475569',
-    borderRadius: 4,
+  navBtn: {
+    fontFamily: '"VT323", monospace',
+    fontSize: 18,
+    padding: '4px 12px',
+    backgroundColor: 'rgba(30, 41, 59, 0.7)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    borderRadius: 6,
     color: '#f8fafc',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
   },
   fullscreenBtn: {
-    fontFamily: '"JetBrains Mono", monospace',
-    fontSize: 12,
-    fontWeight: 600,
-    padding: '6px 12px',
-    backgroundColor: '#0f172a',
+    fontFamily: '"VT323", monospace',
+    fontSize: 18,
+    padding: '4px 12px',
+    backgroundColor: 'rgba(15, 23, 42, 0.8)',
     border: '1px solid #38bdf8',
-    borderRadius: 4,
+    borderRadius: 6,
     color: '#38bdf8',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
@@ -387,9 +430,48 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     marginLeft: 6,
     padding: '4px 10px',
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
-    borderRadius: 4,
+    backgroundColor: 'rgba(15, 23, 42, 0.8)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: 6,
+  },
+  squadRibbon: {
+    pointerEvents: 'auto',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(9, 13, 22, 0.75)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: 8,
+    padding: '6px 14px',
+    overflowX: 'auto',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+  },
+  ribbonTitle: {
+    fontSize: 16,
+    color: '#94a3b8',
+    fontWeight: 'bold',
+    whiteSpace: 'nowrap',
+    marginRight: 4,
+  },
+  pillsList: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    overflowX: 'auto',
+  },
+  agentPill: {
+    fontFamily: '"VT323", monospace',
+    fontSize: 17,
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '3px 12px',
+    border: '1px solid',
+    borderRadius: 20,
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    transition: 'all 0.15s ease',
   },
   logPanel: {
     pointerEvents: 'auto',
@@ -397,35 +479,31 @@ const styles: Record<string, React.CSSProperties> = {
     bottom: 75,
     right: 16,
     width: 440,
-    maxHeight: 230,
-    backgroundColor: '#090d16f5',
-    border: '1px solid #334155',
-    borderRadius: 6,
+    maxHeight: 240,
+    backgroundColor: 'rgba(9, 13, 22, 0.92)',
+    backdropFilter: 'blur(16px)',
+    border: '1px solid rgba(255, 255, 255, 0.12)',
+    borderRadius: 8,
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.7)',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.7)',
     zIndex: 40,
   },
   panelHeader: {
-    backgroundColor: '#1e293b',
+    backgroundColor: 'rgba(30, 41, 59, 0.85)',
     padding: '6px 12px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    color: '#38bdf8',
-    fontSize: 12,
-    fontWeight: 700,
     letterSpacing: 0.5,
-    borderBottom: '1px solid #334155',
-    borderRadius: '6px 6px 0 0',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
   },
   toggleBtn: {
-    fontFamily: '"JetBrains Mono", monospace',
-    fontSize: 10,
-    fontWeight: 700,
-    backgroundColor: '#0f172a',
+    fontFamily: '"VT323", monospace',
+    fontSize: 16,
+    backgroundColor: 'rgba(15, 23, 42, 0.8)',
     border: '1px solid #475569',
-    borderRadius: 3,
+    borderRadius: 4,
     color: '#38bdf8',
     padding: '2px 8px',
     cursor: 'pointer',
@@ -433,22 +511,22 @@ const styles: Record<string, React.CSSProperties> = {
   logBody: {
     padding: 10,
     overflowY: 'auto',
-    maxHeight: 180,
+    maxHeight: 190,
     display: 'flex',
     flexDirection: 'column-reverse',
     gap: 6,
   },
   logItem: {
-    fontSize: 12,
-    lineHeight: 1.4,
+    fontSize: 17,
+    lineHeight: 1.35,
   },
   logTime: {
     color: '#64748b',
     marginRight: 6,
-    fontSize: 11,
+    fontSize: 15,
   },
   logSender: {
-    fontWeight: 700,
+    fontWeight: 'bold',
     marginRight: 6,
   },
   logMsg: {
@@ -457,21 +535,23 @@ const styles: Record<string, React.CSSProperties> = {
   agentDossier: {
     pointerEvents: 'auto',
     position: 'absolute',
-    top: 75,
+    top: 110,
     right: 16,
-    width: 300,
-    backgroundColor: '#090d16fa',
-    border: '1px solid #334155',
-    borderRadius: 6,
-    boxShadow: '0 8px 28px rgba(0,0,0,0.8)',
+    width: 320,
+    backgroundColor: 'rgba(9, 13, 22, 0.95)',
+    backdropFilter: 'blur(20px)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    borderRadius: 8,
+    boxShadow: '0 12px 36px rgba(0, 0, 0, 0.8)',
+    zIndex: 45,
   },
   closeBtn: {
     background: 'transparent',
     border: 'none',
     color: '#94a3b8',
     cursor: 'pointer',
-    fontSize: 14,
-    fontWeight: 700,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   dossierContent: {
     padding: 14,
@@ -479,62 +559,60 @@ const styles: Record<string, React.CSSProperties> = {
   dossierHeader: {
     display: 'flex',
     alignItems: 'center',
-    borderBottom: '1px solid #1e293b',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
     paddingBottom: 10,
     marginBottom: 10,
   },
   dossierField: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
   fieldLabel: {
-    fontSize: 11,
-    fontWeight: 600,
-    color: '#64748b',
+    fontSize: 15,
+    color: '#94a3b8',
     display: 'block',
     marginBottom: 2,
   },
   personalityText: {
-    fontSize: 12,
+    fontSize: 17,
     color: '#cbd5e1',
-    lineHeight: 1.35,
+    lineHeight: 1.3,
   },
   actionBtn: {
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: '"VT323", monospace',
     width: '100%',
-    padding: '8px',
-    backgroundColor: '#1e293b',
-    border: '1px solid #475569',
-    borderRadius: 4,
+    padding: '6px',
+    backgroundColor: 'rgba(30, 41, 59, 0.8)',
+    border: '1px solid #38bdf8',
+    borderRadius: 6,
     color: '#38bdf8',
     cursor: 'pointer',
     marginTop: 6,
-    fontSize: 12,
-    fontWeight: 600,
+    fontSize: 18,
   },
   retroInput: {
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: '"VT323", monospace',
     width: '100%',
-    backgroundColor: '#0f172a',
-    border: '1px solid #334155',
-    borderRadius: 4,
+    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    borderRadius: 6,
     color: '#f8fafc',
-    padding: '8px 10px',
-    fontSize: 12,
+    padding: '6px 10px',
+    fontSize: 18,
     boxSizing: 'border-box',
     outline: 'none',
   },
   sendBtn: {
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: '"VT323", monospace',
     width: '100%',
     marginTop: 6,
     padding: '6px',
     backgroundColor: '#0284c7',
     border: 'none',
-    borderRadius: 4,
+    borderRadius: 6,
     color: '#ffffff',
     cursor: 'pointer',
-    fontSize: 12,
-    fontWeight: 600,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   commandBar: {
     pointerEvents: 'auto',
@@ -545,37 +623,38 @@ const styles: Record<string, React.CSSProperties> = {
   commandForm: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: '#090d16fa',
+    backgroundColor: 'rgba(9, 13, 22, 0.9)',
+    backdropFilter: 'blur(20px)',
     border: '1px solid #38bdf8',
-    borderRadius: 6,
-    padding: '6px 12px',
-    boxShadow: '0 0 20px rgba(56, 189, 248, 0.2)',
+    borderRadius: 8,
+    padding: '6px 14px',
+    boxShadow: '0 0 24px rgba(56, 189, 248, 0.25)',
   },
   commandPrompt: {
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: '"VT323", monospace',
     color: '#38bdf8',
-    fontSize: 16,
-    fontWeight: 700,
+    fontSize: 24,
+    fontWeight: 'bold',
     marginRight: 10,
   },
   commandInput: {
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: '"VT323", monospace',
     flex: 1,
     backgroundColor: 'transparent',
     border: 'none',
     outline: 'none',
     color: '#f8fafc',
-    fontSize: 14,
+    fontSize: 20,
   },
   executeBtn: {
-    fontFamily: '"Press Start 2P", monospace',
+    fontFamily: '"VT323", monospace',
     backgroundColor: '#38bdf8',
     color: '#090d16',
     border: 'none',
-    borderRadius: 4,
-    padding: '8px 14px',
-    fontSize: 9,
-    fontWeight: 700,
+    borderRadius: 6,
+    padding: '6px 14px',
+    fontSize: 18,
+    fontWeight: 'bold',
     cursor: 'pointer',
     marginLeft: 8,
   }

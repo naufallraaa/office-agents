@@ -1,0 +1,25 @@
+warning: in the working copy of 'apps/server/src/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/App.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/components/RetroHUD.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/components/RetroKanban.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/game/OfficeScene.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/game/PixelArtGenerator.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/main.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'apps/web/src/store/useOfficeStore.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/agent-core/src/orchestrator.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/agent-core/src/prompts.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'packages/shared/src/types.ts', LF will be replaced by CRLF the next time Git touches it
+ apps/server/src/index.ts                |  324 [32m++++[m[31m-[m
+ apps/web/index.html                     |   10 [32m+[m[31m-[m
+ apps/web/src/App.tsx                    | 2269 [32m++++++++++++++++++++++++++++++[m[31m-[m
+ apps/web/src/components/RetroHUD.tsx    |  445 [32m+++[m[31m---[m
+ apps/web/src/components/RetroKanban.tsx |  141 [32m+[m[31m-[m
+ apps/web/src/game/OfficeScene.ts        |   41 [32m+[m[31m-[m
+ apps/web/src/game/PixelArtGenerator.ts  |  390 [32m+++++[m[31m-[m
+ apps/web/src/main.tsx                   |    2 [32m+[m[31m-[m
+ apps/web/src/store/useOfficeStore.ts    |   35 [32m+[m[31m-[m
+ packages/agent-core/src/orchestrator.ts |  119 [32m+[m[31m-[m
+ packages/agent-core/src/prompts.ts      |   45 [32m+[m[31m-[m
+ packages/shared/src/types.ts            |    7 [32m+[m
+ 12 files changed, 3382 insertions(+), 446 deletions(-)

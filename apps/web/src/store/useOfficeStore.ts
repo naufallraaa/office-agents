@@ -15,8 +15,10 @@ interface OfficeState {
   tasks: Task[];
   logs: OfficeLog[];
   isConnected: boolean;
+  activeFloor: 1 | 2 | 3;
   
   // Actions
+  setActiveFloor: (floor: 1 | 2 | 3) => void;
   setSelectedAgent: (agent: Agent | null) => void;
   updateAgent: (id: string, updates: Partial<Agent>) => void;
   setAgents: (agents: Agent[]) => void;
@@ -38,17 +40,20 @@ export const useOfficeStore = create<OfficeState>((set, get) => ({
       timestamp: new Date().toLocaleTimeString(),
       sender: 'SYSTEM',
       color: '#38bdf8',
-      message: 'KANTOR-AI virtual office initialized. 5 agents on standby.',
+      message: 'KANTOR-AI virtual office initialized. 6 squad agents on standby.',
     },
     {
       id: 'init_2',
       timestamp: new Date().toLocaleTimeString(),
-      sender: 'Budi (IT Lead)',
-      color: '#3b82f6',
-      message: 'Semua role ready. Menunggu sprint backlog berikutnya...',
+      sender: 'Sarah (PM)',
+      color: '#ec4899',
+      message: 'Halo Opay! Squad 6 role siap. Mau gas sprint apa hari ini?',
     }
   ],
   isConnected: false,
+  activeFloor: 2,
+
+  setActiveFloor: (activeFloor) => set({ activeFloor }),
 
   setSelectedAgent: (agent) => set({ selectedAgent: agent }),
 
@@ -79,14 +84,15 @@ export const useOfficeStore = create<OfficeState>((set, get) => ({
     const updated = agents.map((a) => ({
       ...a,
       state: 'meeting' as const,
+      floor: 3 as const,
       bubble: {
-        text: 'Menuju ruang rapat 📋',
+        text: 'Menuju Boardroom Lantai 3 📋',
         type: 'speech' as const,
         expiresAt: Date.now() + 6000,
       }
     }));
-    set({ agents: updated });
-    addLog('SYSTEM', '#eab308', '🔔 SPRINT SYNC: Semua agen berkumpul di ruang rapat.');
+    set({ agents: updated, activeFloor: 3 });
+    addLog('SYSTEM', '#eab308', '🔔 SPRINT SYNC: Semua agen kumpul di Rooftop Boardroom Lantai 3.');
   },
 
   triggerBreakMode: () => {
@@ -94,14 +100,15 @@ export const useOfficeStore = create<OfficeState>((set, get) => ({
     const updated = agents.map((a) => ({
       ...a,
       state: 'break' as const,
+      floor: 1 as const,
       bubble: {
-        text: 'Waktunya kopi ☕',
+        text: 'Turun ke Cafe Lantai 1 ☕',
         type: 'speech' as const,
         expiresAt: Date.now() + 6000,
       }
     }));
-    set({ agents: updated });
-    addLog('SYSTEM', '#10b981', '☕ BREAK TIME: Tim menuju pantry & coffee bar.');
+    set({ agents: updated, activeFloor: 1 });
+    addLog('SYSTEM', '#10b981', '☕ ISTIRAHAT: Tim turun ke Cafe & Lounge Lantai 1.');
   },
 
   triggerWorkMode: () => {
@@ -109,14 +116,15 @@ export const useOfficeStore = create<OfficeState>((set, get) => ({
     const updated = agents.map((a) => ({
       ...a,
       state: 'working' as const,
+      floor: 2 as const,
       bubble: {
-        text: 'Kembali ke cubicle 💻',
+        text: 'Balik ke Workstation Lantai 2 💻',
         type: 'speech' as const,
         expiresAt: Date.now() + 5000,
       }
     }));
-    set({ agents: updated });
-    addLog('SYSTEM', '#3b82f6', '💻 WORK MODE: Agen kembali ke cubicle masing-masing.');
+    set({ agents: updated, activeFloor: 2 });
+    addLog('SYSTEM', '#3b82f6', '💻 MODE KERJA: Agen kembali ke meja kerja Lantai 2.');
   },
 
   connectSSE: () => {
@@ -141,6 +149,7 @@ export const useOfficeStore = create<OfficeState>((set, get) => ({
               } else if (parsed.data.agentId) {
                 get().updateAgent(parsed.data.agentId, {
                   state: parsed.data.state,
+                  ...(parsed.data.floor !== undefined ? { floor: parsed.data.floor } : {}),
                   bubble: parsed.data.bubble,
                 });
               }

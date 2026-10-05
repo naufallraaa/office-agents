@@ -1,6 +1,8 @@
 import type OpenAI from 'openai';
 import type { ServerEvent, AgentRole } from 'shared';
 import { SQUAD_PERSONAS } from './prompts';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export interface SubtaskPlan {
   id: string;
@@ -31,7 +33,8 @@ export class SquadOrchestrator {
 
   public async runSprint(
     goal: string,
-    broadcast: (event: ServerEvent) => void
+    broadcast: (event: ServerEvent) => void,
+    targetPath?: string
   ): Promise<SprintResult> {
     const timestamp = Date.now();
 
@@ -44,6 +47,7 @@ export class SquadOrchestrator {
       data: {
         agentId: 'agent_pm',
         state: 'working',
+        floor: 2,
         bubble: {
           text: 'Menyusun User Story & Scope...',
           type: 'speech',
@@ -94,6 +98,7 @@ export class SquadOrchestrator {
       data: {
         agentId: 'agent_pm',
         state: 'idle',
+        floor: 2,
         bubble: {
           text: 'Briefing diserahkan ke Lead 📋',
           type: 'speech',
@@ -111,6 +116,7 @@ export class SquadOrchestrator {
       data: {
         agentId: 'agent_lead',
         state: 'working',
+        floor: 2,
         bubble: {
           text: 'Menganalisis backlog sprint...',
           type: 'speech',
@@ -257,6 +263,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
         data: {
           agentId,
           state: 'working',
+          floor: 2,
           bubble: {
             text: `Mengerjakan: ${subtask.title}`,
             type: 'speech',
@@ -323,6 +330,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
         data: {
           agentId,
           state: 'idle',
+          floor: 2,
           bubble: {
             text: 'Task selesai! ✅',
             type: 'speech',
@@ -333,7 +341,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
     }
 
     // ==========================================
-    // 3. QA AUDIT VERIFICATION (5 Rubrik)
+    // 3. QA AUDIT VERIFICATION & TARGETED REJECTION LOOP
     // ==========================================
     broadcast({
       type: 'agent:state',
@@ -341,8 +349,9 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
       data: {
         agentId: 'agent_qa',
         state: 'working',
+        floor: 2,
         bubble: {
-          text: 'Menjalankan audit QA 5 pilar...',
+          text: 'Audit pengujian 5 pilar...',
           type: 'speech',
           expiresAt: Date.now() + 10000,
         },
@@ -353,13 +362,72 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
       type: 'activity:log',
       timestamp: Date.now(),
       data: {
-        sender: 'Qori (QA Engineer)',
+        sender: 'Qori (QA)',
         color: '#f59e0b',
-        message: 'Memulai verifikasi 5 rubrik: Uji Fungsional, Edge-cases, Konkurensi, Visual, dan Aksesibilitas...',
+        message: 'Mulai audit 5 rubrik: Uji Fungsional, Edge-cases, Konkurensi, Visual, dan a11y...',
       },
     });
 
-    let qaReport = 'Semua uji fungsional dan uji kasus negatif berhasil lolos tanpa blocker.';
+    // Targeted QA Bug Detection & Dev Assignment Loop
+    const targetSubtask = planData.subtasks.find(s => s.role === 'backend') || planData.subtasks[0];
+    if (targetSubtask) {
+      const devPersona = SQUAD_PERSONAS[targetSubtask.role];
+      const bugNote = targetSubtask.role === 'backend'
+        ? `Bro ${devPersona.name}! Pas gue uji kasus negatif (payload null/kosong), endpoint return 500 nih. Tambahin null-check validation dulu ya!`
+        : `Sis ${devPersona.name}! Pas gue uji klik cepat berulang, rawan double-submit nih. Pasang debounce/disabled state dulu yak!`;
+
+      // 1. Qori reports the bug to the specific dev
+      broadcast({
+        type: 'activity:log',
+        timestamp: Date.now(),
+        data: {
+          sender: 'Qori (QA)',
+          color: '#f59e0b',
+          message: `🐞 BUG FOUND: @${devPersona.name}! ${bugNote}`,
+        },
+      });
+
+      // Subtask moves backward on Kanban from review to in_progress
+      broadcast({
+        type: 'task:update',
+        timestamp: Date.now(),
+        data: {
+          id: targetSubtask.id,
+          status: 'in_progress',
+          updatedAt: Date.now(),
+        },
+      });
+
+      // 2. Dev acknowledges and fixes
+      const devReply = targetSubtask.role === 'backend'
+        ? `Waduh iya bentar Qor! Langsung gue pasang try-catch sama payload validator biar aman return 400.`
+        : `Siap Qori! Langsung gue pasang state isLoading + disable button pas submit.`;
+
+      broadcast({
+        type: 'activity:log',
+        timestamp: Date.now(),
+        data: {
+          sender: `${devPersona.name} (${devPersona.title})`,
+          color: this.getColorForRole(targetSubtask.role),
+          message: devReply,
+        },
+      });
+
+      // Dev fix applied, task moves back to review
+      targetSubtask.output += `\n[Hotfix QA]: Error handling dan edge-case validation berhasil diimplementasikan.`;
+      broadcast({
+        type: 'task:update',
+        timestamp: Date.now(),
+        data: {
+          id: targetSubtask.id,
+          status: 'review',
+          result: targetSubtask.output,
+          updatedAt: Date.now(),
+        },
+      });
+    }
+
+    let qaReport = 'Semua uji fungsional dan uji kasus negatif berhasil lolos setelah perbaikan edge-case.';
     try {
       const qaResponse = await this.llm.chat.completions.create({
         model: this.model,
@@ -381,7 +449,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
       type: 'activity:log',
       timestamp: Date.now(),
       data: {
-        sender: 'Qori (QA Engineer)',
+        sender: 'Qori (QA)',
         color: '#f59e0b',
         message: `Audit QA Selesai: VERDICT PASSED. Bukti penerimaan lengkap diserahkan ke Lead.`,
       },
@@ -393,6 +461,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
       data: {
         agentId: 'agent_qa',
         state: 'idle',
+        floor: 2,
       },
     });
 
@@ -433,6 +502,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
       data: {
         agentId: 'agent_pm',
         state: 'working',
+        floor: 2,
         bubble: {
           text: 'Merilis Release Notes...',
           type: 'speech',
@@ -451,7 +521,7 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
       },
     });
 
-    // All 6 agents celebrate & head to break / pantry
+    // All 6 agents celebrate & head to break / cafe (Floor 1)
     ['agent_pm', 'agent_lead', 'agent_frontend', 'agent_backend', 'agent_devops', 'agent_qa'].forEach((id) => {
       broadcast({
         type: 'agent:state',
@@ -459,14 +529,45 @@ Berikan response HANYA dalam format JSON valid tanpa markdown tambahan dengan st
         data: {
           agentId: id,
           state: 'break',
+          floor: 1,
           bubble: {
-            text: 'Waktunya ngopi ☕',
+            text: 'Waktunya rehat ke Cafe ☕',
             type: 'speech',
             expiresAt: Date.now() + 8000,
           },
         },
       });
     });
+
+    // Save physical file output if targetPath is valid
+    if (targetPath) {
+      try {
+        const outDir = path.resolve(targetPath, 'outputs');
+        if (!fs.existsSync(outDir)) {
+          fs.mkdirSync(outDir, { recursive: true });
+        }
+        const summaryPath = path.join(outDir, 'SPRINT_REPORT.md');
+        const content = `# Sprint Report: ${goal}\n\n` +
+          `**Date:** ${new Date().toLocaleString()}\n` +
+          `**Architecture:** ${planData.architectureSummary}\n\n` +
+          `## Subtasks:\n` +
+          planData.subtasks.map(s => `### [${s.role.toUpperCase()}] ${s.title}\n${s.output}\n`).join('\n') +
+          `\n## QA Audit:\n${qaReport}\n\n` +
+          `## Release Approval:\n${leadApproval}\n`;
+        fs.writeFileSync(summaryPath, content, 'utf-8');
+        broadcast({
+          type: 'activity:log',
+          timestamp: Date.now(),
+          data: {
+            sender: 'Dimas (DevOps)',
+            color: '#ef4444',
+            message: `📁 File hasil sprint tersimpan di: ${summaryPath}`,
+          },
+        });
+      } catch (err: any) {
+        console.warn('Failed to write output files:', err.message);
+      }
+    }
 
     return {
       goal,

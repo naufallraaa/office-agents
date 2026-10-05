@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 /**
  * Procedural Pixel Art Generator for KANTOR-AI
- * Generates all office tiles, furniture, equipment, and agent sprites in memory.
+ * Generates all office tiles, furniture, custom desk props, and unique agent sprites in memory.
  */
 export class PixelArtGenerator {
   public static generateAll(scene: Phaser.Scene) {
@@ -10,6 +10,7 @@ export class PixelArtGenerator {
     this.generateWalls(scene);
     this.generateFurniture(scene);
     this.generateOfficeEquipment(scene);
+    this.generateCustomDeskProps(scene);
     this.generateAgentSprites(scene);
     this.generateEmotes(scene);
   }
@@ -108,9 +109,9 @@ export class PixelArtGenerator {
     if (!scene.textures.exists('furniture_desk')) {
       const g = scene.make.graphics({ add: false });
       // Desk surface
-      g.fillStyle(0x5c4033, 1); // dark walnut top
+      g.fillStyle(0x473327, 1); // dark walnut top
       g.fillRect(2, 6, 44, 24);
-      g.fillStyle(0x7a5643, 1); // top edge bevel
+      g.fillStyle(0x694a38, 1); // top edge bevel
       g.fillRect(2, 6, 44, 3);
       // Metal legs
       g.fillStyle(0x334155, 1);
@@ -292,57 +293,362 @@ export class PixelArtGenerator {
     }
   }
 
+  /**
+   * 6 Unique Desk Props Sets for each Specialist
+   */
+  private static generateCustomDeskProps(scene: Phaser.Scene) {
+    // 1. SARAH (PM): Sleek laptop + leather planner + pink tumbler (44x16)
+    if (!scene.textures.exists('prop_desk_pm')) {
+      const g = scene.make.graphics({ add: false });
+      // Slim silver laptop (center)
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(14, 2, 16, 10);
+      g.fillStyle(0xec4899, 0.9); // Product KPI chart screen
+      g.fillRect(15, 3, 14, 8);
+      g.fillStyle(0xffffff, 1);
+      g.fillRect(16, 5, 8, 1);
+      g.fillRect(16, 7, 11, 1);
+      // Leather planner notebook (left)
+      g.fillStyle(0x78350f, 1);
+      g.fillRect(3, 4, 8, 10);
+      g.fillStyle(0xfef08a, 1); // bookmark ribbon
+      g.fillRect(6, 3, 2, 12);
+      // Pink Tumbler (right)
+      g.fillStyle(0xf472b6, 1);
+      g.fillRect(34, 4, 5, 10);
+      g.fillStyle(0xe2e8f0, 1); // metallic lid
+      g.fillRect(34, 2, 5, 2);
+      g.generateTexture('prop_desk_pm', 44, 16);
+      g.destroy();
+    }
+
+    // 2. BUDI (IT LEAD): Laptop stand + vertical code monitor + book stack (44x18)
+    if (!scene.textures.exists('prop_desk_it_lead')) {
+      const g = scene.make.graphics({ add: false });
+      // Vertical monitor (left)
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(4, 1, 10, 16);
+      g.fillStyle(0x0284c7, 1);
+      g.fillRect(5, 2, 8, 14);
+      g.fillStyle(0xe0f2fe, 1);
+      for (let y = 4; y <= 13; y += 3) {
+        g.fillRect(6, y, 6, 1);
+      }
+      // Laptop on stand (center)
+      g.fillStyle(0x334155, 1);
+      g.fillRect(17, 3, 14, 10);
+      g.fillStyle(0x3b82f6, 1);
+      g.fillRect(18, 4, 12, 8);
+      // Book stack (right)
+      g.fillStyle(0x1e3a8a, 1); // Blue book
+      g.fillRect(33, 10, 9, 3);
+      g.fillStyle(0x047857, 1); // Green book
+      g.fillRect(33, 7, 8, 3);
+      g.fillStyle(0xb91c1c, 1); // Red book
+      g.fillRect(34, 4, 7, 3);
+      g.generateTexture('prop_desk_it_lead', 44, 18);
+      g.destroy();
+    }
+
+    // 3. FANI (FRONTEND): Curved UI display + drawing tablet + mini cactus (44x16)
+    if (!scene.textures.exists('prop_desk_frontend')) {
+      const g = scene.make.graphics({ add: false });
+      // Curved widescreen UI display
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(10, 1, 24, 11);
+      g.fillStyle(0x06b6d4, 1); // UI components preview
+      g.fillRect(12, 3, 7, 7);
+      g.fillStyle(0xec4899, 1);
+      g.fillRect(20, 3, 6, 7);
+      g.fillStyle(0x10b981, 1);
+      g.fillRect(27, 3, 5, 7);
+      // Drawing tablet with stylus (left)
+      g.fillStyle(0x1e293b, 1);
+      g.fillRect(2, 6, 7, 9);
+      g.fillStyle(0x14b8a6, 1); // stylus
+      g.fillRect(8, 5, 1, 8);
+      // Mini succulent cactus pot (right)
+      g.fillStyle(0xc2410c, 1);
+      g.fillRect(37, 9, 5, 6);
+      g.fillStyle(0x22c55e, 1);
+      g.fillRect(38, 5, 3, 4);
+      g.generateTexture('prop_desk_frontend', 44, 16);
+      g.destroy();
+    }
+
+    // 4. BAGAS (BACKEND): Matrix dark terminal + large coffee thermos + rubber duck (44x16)
+    if (!scene.textures.exists('prop_desk_backend')) {
+      const g = scene.make.graphics({ add: false });
+      // Dark Matrix terminal
+      g.fillStyle(0x022c22, 1);
+      g.fillRect(11, 1, 20, 12);
+      g.fillStyle(0x22c55e, 1); // green SQL code lines
+      g.fillRect(13, 3, 8, 1);
+      g.fillRect(13, 6, 14, 1);
+      g.fillRect(13, 9, 10, 1);
+      // Coffee Thermos jug (left)
+      g.fillStyle(0x475569, 1);
+      g.fillRect(3, 4, 6, 11);
+      g.fillStyle(0x94a3b8, 1);
+      g.fillRect(4, 2, 4, 2);
+      // Rubber Duck (right)
+      g.fillStyle(0xfacc15, 1); // Yellow body
+      g.fillRect(34, 8, 7, 6);
+      g.fillRect(37, 5, 4, 4); // Duck head
+      g.fillStyle(0xea580c, 1); // Orange beak
+      g.fillRect(41, 6, 2, 2);
+      g.generateTexture('prop_desk_backend', 44, 16);
+      g.destroy();
+    }
+
+    // 5. DIMAS (DEVOPS): Monitoring latency curves + telemetry gadget (44x16)
+    if (!scene.textures.exists('prop_desk_devops')) {
+      const g = scene.make.graphics({ add: false });
+      // Grafana monitor
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(12, 1, 20, 12);
+      g.fillStyle(0x18181b, 1);
+      g.fillRect(13, 2, 18, 10);
+      // Orange latency wave line
+      g.fillStyle(0xf97316, 1);
+      g.fillRect(15, 8, 3, 2);
+      g.fillRect(18, 5, 3, 2);
+      g.fillRect(21, 7, 3, 2);
+      g.fillRect(24, 4, 3, 2);
+      g.fillRect(27, 8, 3, 2);
+      // Cable coil & gadget (left)
+      g.fillStyle(0x3b82f6, 1);
+      g.fillRect(4, 8, 5, 6);
+      g.fillStyle(0xef4444, 1);
+      g.fillRect(5, 5, 1, 3); // antenna
+      // Multimeter (right)
+      g.fillStyle(0xd97706, 1);
+      g.fillRect(35, 6, 6, 9);
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(36, 8, 4, 3);
+      g.generateTexture('prop_desk_devops', 44, 16);
+      g.destroy();
+    }
+
+    // 6. QORI (QA): Test checklist display + clipboard + magnifying glass (44x16)
+    if (!scene.textures.exists('prop_desk_qa')) {
+      const g = scene.make.graphics({ add: false });
+      // Test checklist monitor
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(12, 1, 20, 12);
+      g.fillStyle(0x1e293b, 1);
+      g.fillRect(13, 2, 18, 10);
+      // Green checks & red crosses
+      g.fillStyle(0x22c55e, 1); // check 1
+      g.fillRect(15, 4, 3, 2);
+      g.fillStyle(0xef4444, 1); // cross 1
+      g.fillRect(23, 4, 3, 2);
+      g.fillStyle(0x22c55e, 1); // check 2
+      g.fillRect(15, 8, 3, 2);
+      g.fillStyle(0x22c55e, 1); // check 3
+      g.fillRect(23, 8, 3, 2);
+      // Clipboard paper (left)
+      g.fillStyle(0x78350f, 1);
+      g.fillRect(3, 4, 7, 11);
+      g.fillStyle(0xf8fafc, 1);
+      g.fillRect(4, 5, 5, 9);
+      // Magnifying glass (right)
+      g.fillStyle(0x38bdf8, 1); // glass lens
+      g.fillRect(35, 4, 5, 5);
+      g.fillStyle(0x94a3b8, 1); // handle
+      g.fillRect(39, 9, 3, 5);
+      g.generateTexture('prop_desk_qa', 44, 16);
+      g.destroy();
+    }
+  }
+
+  /**
+   * Generates Unique Character Silhouettes (Distinct Hairstyles, Outfits, Accessories)
+   */
   private static generateAgentSprites(scene: Phaser.Scene) {
-    const roles = [
-      { key: 'agent_pm', hair: 0x4a044e, shirt: 0xbe185d, skin: 0xfed7aa, accent: 0xfbcfe8 }, // Magenta blazer, dark wine hair, rose accent
-      { key: 'agent_it_lead', hair: 0x451a03, shirt: 0x1e3a8a, skin: 0xfbcfe8, accent: 0x93c5fd }, // Navy Blazer, glasses
-      { key: 'agent_frontend', hair: 0x1e293b, shirt: 0x059669, skin: 0xfed7aa, accent: 0xa7f3d0 }, // Green hoodie
-      { key: 'agent_backend', hair: 0x312e81, shirt: 0x4c1d95, skin: 0xfde047, accent: 0xc4b5fd }, // Purple tee
-      { key: 'agent_devops', hair: 0x7c2d12, shirt: 0xb91c1c, skin: 0xfbcfe8, accent: 0xfca5a5 }, // Red vest
-      { key: 'agent_qa', hair: 0xca8a04, shirt: 0xd97706, skin: 0xfef08a, accent: 0xfde68a }, // Amber jacket
-    ];
+    const roles = ['pm', 'it_lead', 'frontend', 'backend', 'devops', 'qa'];
 
     roles.forEach(role => {
-      if (!scene.textures.exists(role.key)) {
-        const g = scene.make.graphics({ add: false });
-        // Width: 20, Height: 28
-        // Shadow on ground
-        g.fillStyle(0x000000, 0.3);
-        g.fillRect(4, 25, 12, 3);
+      const spriteKey = `agent_${role}`;
+      if (scene.textures.exists(spriteKey)) return;
 
-        // Legs / Pants
-        g.fillStyle(0x1e293b, 1); // dark jeans
-        g.fillRect(6, 18, 3, 7);
-        g.fillRect(11, 18, 3, 7);
-        // Shoes
-        g.fillStyle(0x0f172a, 1);
-        g.fillRect(5, 24, 4, 3);
-        g.fillRect(11, 24, 4, 3);
+      const g = scene.make.graphics({ add: false });
 
-        // Torso / Shirt
-        g.fillStyle(role.shirt, 1);
-        g.fillRect(5, 10, 10, 9);
-        // Collar / Accent
-        g.fillStyle(role.accent, 1);
-        g.fillRect(8, 10, 4, 3);
+      // Ground Shadow
+      g.fillStyle(0x000000, 0.35);
+      g.fillRect(3, 26, 16, 4);
+
+      // Shoes
+      g.fillStyle(0x0f172a, 1);
+      g.fillRect(5, 25, 4, 3);
+      g.fillRect(13, 25, 4, 3);
+
+      // Pants / Legs
+      g.fillStyle(0x1e293b, 1);
+      g.fillRect(6, 19, 3, 7);
+      g.fillRect(13, 19, 3, 7);
+
+      // ==================== ROLE SPECIFIC BODIES & HAIRSTYLES ====================
+      if (role === 'pm') {
+        // SARAH: Long flowing wavy hair down past shoulders (dark wine) + chic magenta blazer
+        // Torso / Blazer
+        g.fillStyle(0xbe185d, 1); // Magenta blazer
+        g.fillRect(5, 11, 12, 9);
+        g.fillStyle(0xfef3c7, 1); // Cream inner top
+        g.fillRect(9, 11, 4, 5);
 
         // Head / Skin
-        g.fillStyle(role.skin, 1);
-        g.fillRect(6, 4, 8, 7);
+        g.fillStyle(0xfed7aa, 1);
+        g.fillRect(7, 4, 8, 7);
         // Eyes
         g.fillStyle(0x0f172a, 1);
-        g.fillRect(7, 7, 2, 2);
-        g.fillRect(11, 7, 2, 2);
+        g.fillRect(8, 7, 2, 2);
+        g.fillRect(12, 7, 2, 2);
 
-        // Hair
-        g.fillStyle(role.hair, 1);
-        g.fillRect(5, 2, 10, 4);
-        g.fillRect(4, 4, 2, 3);
-        g.fillRect(14, 4, 2, 3);
+        // Long flowing dark wine hair (flows down past shoulders!)
+        g.fillStyle(0x4a044e, 1);
+        g.fillRect(6, 2, 10, 4); // Top dome
+        g.fillRect(4, 3, 3, 16); // Left flowing hair down to waist
+        g.fillRect(15, 3, 3, 16); // Right flowing hair down to waist
+        g.fillRect(5, 17, 2, 2); // hair curl bottom left
+        g.fillRect(15, 17, 2, 2); // hair curl bottom right
 
-        g.generateTexture(role.key, 20, 28);
-        g.destroy();
+      } else if (role === 'it_lead') {
+        // BUDI: Combed side-part dark hair, glasses, navy oxford shirt
+        g.fillStyle(0x1e3a8a, 1); // Navy oxford
+        g.fillRect(5, 11, 12, 9);
+        g.fillStyle(0x93c5fd, 1); // Light blue tie & collar
+        g.fillRect(10, 11, 2, 8);
+
+        // Head / Skin
+        g.fillStyle(0xfbcfe8, 1);
+        g.fillRect(7, 4, 8, 7);
+
+        // Glasses frames across face
+        g.fillStyle(0x0f172a, 1);
+        g.fillRect(7, 7, 3, 2);
+        g.fillRect(12, 7, 3, 2);
+        g.fillRect(10, 7, 2, 1); // bridge
+
+        // Clean side-part dark brown hair
+        g.fillStyle(0x451a03, 1);
+        g.fillRect(6, 2, 10, 4);
+        g.fillRect(5, 4, 2, 4); // left sideburn
+        g.fillRect(15, 3, 2, 4); // right sideburn
+
+      } else if (role === 'frontend') {
+        // FANI: High ponytail with teal tie, studio headphones, emerald oversized hoodie
+        // Torso / Emerald Hoodie
+        g.fillStyle(0x059669, 1);
+        g.fillRect(4, 11, 14, 9);
+        g.fillStyle(0x047857, 1); // kangaroo pocket line
+        g.fillRect(7, 16, 8, 3);
+
+        // Studio Headphones around neck
+        g.fillStyle(0x0284c7, 1);
+        g.fillRect(5, 10, 3, 3); // Left earpad
+        g.fillRect(14, 10, 3, 3); // Right earpad
+        g.fillRect(6, 11, 10, 1); // headband loop
+
+        // Head / Skin
+        g.fillStyle(0xfed7aa, 1);
+        g.fillRect(7, 4, 8, 7);
+        // Eyes
+        g.fillStyle(0x0f172a, 1);
+        g.fillRect(8, 7, 2, 2);
+        g.fillRect(12, 7, 2, 2);
+
+        // Hair with HIGH PONYTAIL on top-right
+        g.fillStyle(0x1e293b, 1);
+        g.fillRect(6, 2, 10, 4);
+        g.fillRect(5, 4, 2, 4);
+        // Bright teal hair scrunchie
+        g.fillStyle(0x14b8a6, 1);
+        g.fillRect(15, 2, 3, 2);
+        // Ponytail bundle sticking up & swooping right
+        g.fillStyle(0x1e293b, 1);
+        g.fillRect(16, 0, 3, 3);
+        g.fillRect(17, 3, 3, 5);
+
+      } else if (role === 'backend') {
+        // BAGAS: Messy spiky hair, dark 404 graphic tee
+        g.fillStyle(0x18181b, 1); // Black tee
+        g.fillRect(5, 11, 12, 9);
+        g.fillStyle(0xa855f7, 1); // Purple "404" print
+        g.fillRect(8, 14, 6, 2);
+
+        // Head / Skin
+        g.fillStyle(0xfde047, 1);
+        g.fillRect(7, 4, 8, 7);
+        // Eyes
+        g.fillStyle(0x0f172a, 1);
+        g.fillRect(8, 7, 2, 2);
+        g.fillRect(12, 7, 2, 2);
+
+        // Messy spiky wavy hair on top
+        g.fillStyle(0x312e81, 1);
+        g.fillRect(6, 2, 10, 4);
+        g.fillRect(5, 1, 3, 2); // left spike
+        g.fillRect(10, 0, 3, 2); // center spike
+        g.fillRect(14, 1, 3, 2); // right spike
+        g.fillRect(5, 4, 2, 4);
+        g.fillRect(15, 4, 2, 4);
+
+      } else if (role === 'devops') {
+        // DIMAS: Backward baseball cap, tech utility vest, goatee/stubble
+        // Shirt & Utility Vest
+        g.fillStyle(0x1f2937, 1); // dark long-sleeve
+        g.fillRect(5, 11, 12, 9);
+        g.fillStyle(0xc2410c, 1); // Orange-red utility vest
+        g.fillRect(5, 11, 4, 8);
+        g.fillRect(13, 11, 4, 8);
+
+        // Head / Skin
+        g.fillStyle(0xfbcfe8, 1);
+        g.fillRect(7, 4, 8, 7);
+        // Stubble / Goatee shadow on chin
+        g.fillStyle(0x7c2d12, 1);
+        g.fillRect(9, 10, 4, 2);
+
+        // Eyes
+        g.fillStyle(0x0f172a, 1);
+        g.fillRect(8, 7, 2, 2);
+        g.fillRect(12, 7, 2, 2);
+
+        // Backward baseball cap
+        g.fillStyle(0x334155, 1);
+        g.fillRect(6, 2, 10, 4); // Cap dome
+        // Visor sticking out backward on the left
+        g.fillStyle(0x1e293b, 1);
+        g.fillRect(2, 4, 4, 2);
+
+      } else if (role === 'qa') {
+        // QORI: Sporty bob cut with bangs, round glasses, yellow mustard bomber jacket
+        g.fillStyle(0xd97706, 1); // Mustard bomber
+        g.fillRect(5, 11, 12, 9);
+        g.fillStyle(0x92400e, 1); // Center zipper
+        g.fillRect(10, 11, 2, 9);
+
+        // Head / Skin
+        g.fillStyle(0xfef08a, 1);
+        g.fillRect(7, 4, 8, 7);
+
+        // Round golden reading glasses
+        g.fillStyle(0xeab308, 1);
+        g.fillRect(7, 7, 3, 2);
+        g.fillRect(12, 7, 3, 2);
+        g.fillRect(10, 7, 2, 1);
+
+        // Rounded bob cut with bangs framing face
+        g.fillStyle(0xca8a04, 1);
+        g.fillRect(6, 2, 10, 4); // Top dome
+        g.fillRect(6, 5, 10, 2); // Bangs across forehead
+        g.fillRect(4, 4, 3, 7); // Left bob curve at cheek
+        g.fillRect(15, 4, 3, 7); // Right bob curve at cheek
       }
+
+      g.generateTexture(spriteKey, 22, 30);
+      g.destroy();
     });
   }
 

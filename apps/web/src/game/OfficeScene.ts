@@ -162,8 +162,13 @@ export class OfficeScene extends Phaser.Scene {
     cubicles.forEach(cb => {
       // Desk
       this.add.image(cb.x, cb.y, 'furniture_desk');
-      // Monitor
-      this.add.image(cb.x, cb.y - 12, 'equip_dual_monitor');
+      // Custom Props for each specialist's desk
+      const propKey = `prop_desk_${cb.role}`;
+      if (this.textures.exists(propKey)) {
+        this.add.image(cb.x, cb.y - 8, propKey);
+      } else {
+        this.add.image(cb.x, cb.y - 12, 'equip_dual_monitor');
+      }
       // Chair behind desk
       this.add.image(cb.x, cb.y + 24, 'furniture_chair');
       // Cubicle partitions
@@ -171,9 +176,8 @@ export class OfficeScene extends Phaser.Scene {
       this.add.image(cb.x + 32, cb.y, 'wall_partition').setScale(0.8, 1);
       // Desk Nametag label
       this.add.text(cb.x, cb.y - 30, cb.label, {
-        fontFamily: '"JetBrains Mono", monospace',
-        fontSize: '11px',
-        fontStyle: 'bold',
+        fontFamily: '"VT323", monospace',
+        fontSize: '18px',
         color: '#e2e8f0',
         stroke: '#000000',
         strokeThickness: 3,
@@ -205,9 +209,8 @@ export class OfficeScene extends Phaser.Scene {
     // Big Presentation Whiteboard
     this.add.image(860, 100, 'furniture_whiteboard').setScale(1.5);
     this.add.text(860, 60, '📋 SPRINT SYNC ROOM', {
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: '12px',
-      fontStyle: 'bold',
+      fontFamily: '"VT323", monospace',
+      fontSize: '20px',
       color: '#38bdf8',
       stroke: '#000000',
       strokeThickness: 3,
@@ -220,9 +223,8 @@ export class OfficeScene extends Phaser.Scene {
     this.add.image(300, 700, 'furniture_meeting_table').setScale(0.8);
     this.add.image(70, 760, 'equip_plant');
     this.add.text(180, 610, '☕ PANTRY & BREAKROOM', {
-      fontFamily: '"JetBrains Mono", monospace',
-      fontSize: '12px',
-      fontStyle: 'bold',
+      fontFamily: '"VT323", monospace',
+      fontSize: '20px',
       color: '#f59e0b',
       stroke: '#000000',
       strokeThickness: 3,
@@ -314,15 +316,14 @@ export class OfficeScene extends Phaser.Scene {
 
         // Name tag
         const nameText = this.add.text(0, 18, agent.name, {
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: '11px',
-          fontStyle: 'bold',
+          fontFamily: '"VT323", monospace',
+          fontSize: '18px',
           color: agent.color,
           backgroundColor: '#090d16f0',
           stroke: '#000000',
           strokeThickness: 2,
           resolution: 2,
-          padding: { x: 4, y: 2 }
+          padding: { x: 5, y: 1 }
         }).setOrigin(0.5);
         container.add(nameText);
 
@@ -331,21 +332,21 @@ export class OfficeScene extends Phaser.Scene {
         
         // Emote Icon
         const emoteIcon = this.add.text(0, 0, this.getEmoteForState(agent.state), {
-          fontSize: '16px',
+          fontSize: '18px',
         }).setOrigin(0.5);
         bubbleContainer.add(emoteIcon);
 
         // Speech Text
         const bubbleText = this.add.text(0, -22, '', {
-          fontFamily: '"JetBrains Mono", monospace',
-          fontSize: '11px',
+          fontFamily: '"VT323", monospace',
+          fontSize: '18px',
           color: '#ffffff',
           backgroundColor: '#090d16f8',
           stroke: '#000000',
           strokeThickness: 2,
           resolution: 2,
-          padding: { x: 6, y: 3 },
-          wordWrap: { width: 160 }
+          padding: { x: 8, y: 3 },
+          wordWrap: { width: 180 }
         }).setOrigin(0.5).setVisible(false);
         bubbleContainer.add(bubbleText);
 
